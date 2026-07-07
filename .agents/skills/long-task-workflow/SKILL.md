@@ -122,7 +122,7 @@ End large tasks with:
 - Follow-up steps, if any.
 - Suggested commit message when useful.
 
-When the user asks for a commit-style report, or when the final report should be based directly on the current repository diff, use the `$commit-report` skill if available. Base the suggested commit message only on the verified diff. Do not stage, unstage, commit, amend, reset, or push unless the user explicitly asks.
+Use the `$commit-report` skill only when the user asks for a commit-style report, a current diff summary, or a suggested commit message. Base any suggested commit message only on the verified diff. Do not stage, unstage, commit, amend, reset, or push unless the user explicitly asks.
 
 Suggested compact final report format when a full commit-style report is not needed:
 

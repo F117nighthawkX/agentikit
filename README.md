@@ -1,6 +1,6 @@
 # Agentikit
 
-Agentikit is a reusable rules and workflow kit for coding agents.
+Agentikit is a reusable, copyable rules and workflow kit for coding agents.
 
 It provides a compact `AGENTS.md`, optional agent guidance docs, and reusable skills for common repository workflows like long-task execution and commit-style reporting. The package is designed to stay small at the root while letting agents load deeper guidance only when the task calls for it.
 
@@ -27,17 +27,29 @@ docs/
     adr-template.md
     llm-runtime-guidance.md
   adr/
+    .gitkeep
 .agents/
   skills/
     commit-report/
       SKILL.md
     long-task-workflow/
       SKILL.md
+scripts/
+  verify_package.py
 ```
 
 ## How to Use
 
-Copy the contents of this package into the root of a repository.
+Copy these paths into the root of a repository:
+
+- `AGENTS.md`
+- `.agents/skills/`
+- `docs/agent/`
+- `docs/adr/`
+
+The `.agents/` directory is hidden on some systems, so make sure your copy command includes hidden paths.
+
+If the target repository already has an `AGENTS.md`, merge the relevant Agentikit guidance into the existing file instead of overwriting project-specific instructions.
 
 Then update the `Project Commands` section in `AGENTS.md`:
 
@@ -51,6 +63,8 @@ Then update the `Project Commands` section in `AGENTS.md`:
 ```
 
 Keep `AGENTS.md` short and durable. Put repeatable task workflows into `.agents/skills/`, and put longer reference material in `docs/agent/`.
+
+The `scripts/` directory is for maintaining this source repository. It does not need to be copied into target repositories.
 
 ## Skills
 
@@ -91,6 +105,16 @@ repo-root/
       llm-runtime-guidance.md
     adr/
 ```
+
+## Maintainer Checks
+
+This repository intentionally does not use package-manager tooling. To verify the copyable kit structure after edits, run:
+
+```bash
+python scripts/verify_package.py
+```
+
+That check verifies the expected paths, skill metadata, README copy instructions, and tracked ADR placeholder.
 
 ## Cross-Agent Notes
 

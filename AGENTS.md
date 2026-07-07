@@ -154,5 +154,5 @@ Read optional docs only when the task calls for them:
 - `docs/agent/llm-runtime-guidance.md`: when implementing code that calls LLMs, agents, classifiers, extractors, routers, retry loops, or deterministic transforms.
 
 Use available skills when the task matches them:
-- `$commit-report`: use for current diff summaries, suggested commit messages, commit-style completion reports, or final reports based on repository changes.
+- `$commit-report`: use for explicit current diff summaries, suggested commit messages, or commit-style completion reports.
 - `$long-task-workflow`: use for large multi-file tasks, staged implementations, refactors, migrations, or work that needs a checklist, phased verification, handoff notes, or a structured final report.
