@@ -52,6 +52,13 @@ Use the 50/72 rule:
 - Wrap body lines at 72 characters when practical.
 - Keep the subject short. Put planning details in the body.
 
+Use a commit body when the change is more significant than a trivial edit.
+For simple one-file, few-line, typo, formatting, or documentation-only changes,
+the subject alone is enough. For changes that touch business logic, UI
+functionality, public interfaces, persistence, security, build behavior, or
+multiple related files, include a short body that summarizes the implementation
+in one to three sentences.
+
 Use imperative mood in the subject:
 
 ```text
@@ -97,13 +104,9 @@ Bad:
 - `C:\Users\Name\Documents\project\src\auth\session.ts`
 ```
 
-If the diff maps clearly to an issue, ticket, bucket, epic, milestone, task file, or planning document, include it.
-
-If it does not, write:
-
-```text
-- Planning reference: none
-```
+If the diff maps clearly to an issue, ticket, bucket, epic, milestone, task file,
+or planning document, include it. If there is no clear planning reference, omit
+the planning reference line entirely.
 
 Use `Follow-up steps` only for work that remains outside the verified diff: manual checks, deployment notes, generated-file refreshes, environment setup, review reminders, or commands that should be run later. Do not use it to repeat implemented changes.
 
@@ -116,9 +119,9 @@ Suggested commit message:
 
 <type>(<optional scope>): <short subject under 50 chars when practical>
 
-<optional body wrapped at 72 characters>
+<body when warranted, wrapped at 72 characters>
 
-- Planning reference: `<issue/ticket/bucket/epic/task>` or none
+- Planning reference: `<issue/ticket/bucket/epic/task>` only when clear
 
 Diff basis:
 
