@@ -33,6 +33,7 @@ Before coding, produce a short plan with:
 - Assumptions.
 - Non-goals.
 - Expected files or areas touched.
+- Relevant existing behavior, flow, or UI fit constraints that should remain intact.
 - Risks.
 - Verification plan.
 
@@ -52,6 +53,7 @@ Checklist:
 - [ ] Implement focused change
 - [ ] Add or update tests
 - [ ] Run verification
+- [ ] Regression and fit review for touched behavior or UI
 - [ ] Simplification pass, including comment-preservation check
 - [ ] Final report
 ```
@@ -117,6 +119,7 @@ End large tasks with:
 - Summary of behavior changed.
 - Files changed.
 - Tests or checks run.
+- Regression and fit review for touched behavior or UI.
 - Simplification pass result.
 - Skipped verification or remaining risk.
 - Follow-up steps, if any.
@@ -135,6 +138,9 @@ Files changed:
 
 Verification:
 - `<command>` - passed, failed, or not run.
+
+Regression and fit review:
+- <existing behavior preserved and UI/product fit checked where relevant, or not applicable>
 
 Simplification pass:
 - <what was simplified, or no meaningful simplification needed; mention any non-trivial existing comment removal or rewrite>

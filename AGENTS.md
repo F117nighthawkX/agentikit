@@ -47,6 +47,10 @@ When multiple interpretations or approaches exist:
 
 Before adding or changing code, understand the local context. Read the target file, immediate callers and callees, exports, public interfaces, schemas, type definitions, shared utilities, nearby tests, and existing patterns as needed.
 
+Before changing existing behavior, identify what nearby behavior must remain intact. Treat unchanged behavior as part of the task even when it is not named in acceptance criteria; preserve it unless the user asked to change it or you surface and confirm the tradeoff.
+
+For UI work, inspect the surrounding flow and visual system before implementing. Layout, spacing, alignment, animation, placement, affordances, and state behavior should feel like a natural extension of the project. Ask whether someone using the project could tell the new work was added later; if yes, adjust within scope or report the mismatch.
+
 Do not add a new pattern before checking whether the repo already has one.
 
 If code seems oddly structured, assume there may be a reason. Ask or investigate before replacing it.

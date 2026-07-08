@@ -2,7 +2,7 @@
 
 Agentikit is a reusable, copyable rules and workflow kit for coding agents.
 
-It provides a compact `AGENTS.md`, optional agent guidance docs, and reusable skills for common repository workflows like long-task execution and commit-style reporting. The package is designed to stay small at the root while letting agents load deeper guidance only when the task calls for it.
+It provides a compact `AGENTS.md`, optional agent guidance docs, and reusable skills for common repository workflows like change planning, long-task execution, and commit-style reporting. The package is designed to stay small at the root while letting agents load deeper guidance only when the task calls for it.
 
 ## Origins
 
@@ -12,7 +12,7 @@ The first version was based on ideas from [`multica-ai/andrej-karpathy-skills`](
 
 From there, I reviewed several proposed changes and pull requests against that project, selected the parts that seemed broadly useful, and narrowed the guidance into a smaller, tool-neutral structure. The goal was not to copy every rule. It was to keep the pieces that improve coding-agent behavior, remove rules that felt too tool-specific or too heavy for normal work, and split longer workflows into optional docs or skills.
 
-Agentikit keeps the same general spirit: agents should clarify before guessing, make surgical changes, avoid speculative abstractions, verify their work, and report uncertainty honestly. It adapts those ideas for `AGENTS.md`, reusable skills, and project guidance that can be shared across repositories.
+Agentikit keeps the same general spirit: agents should clarify before guessing, make surgical changes, preserve existing behavior, fit surrounding product patterns, avoid speculative abstractions, verify their work, and report uncertainty honestly. It adapts those ideas for `AGENTS.md`, reusable skills, and project guidance that can be shared across repositories.
 
 This project is not affiliated with Andrej Karpathy, Multica, or the original `andrej-karpathy-skills` repository.
 
@@ -33,6 +33,8 @@ docs/
     commit-report/
       SKILL.md
     long-task-workflow/
+      SKILL.md
+    repo-change-planner/
       SKILL.md
 scripts/
   verify_package.py
@@ -74,6 +76,7 @@ Included skills:
 
 - `$commit-report`: use for current diff summaries, suggested commit messages, commit-style completion reports, or final reports based on repository changes.
 - `$long-task-workflow`: use for large multi-file tasks, staged implementations, refactors, migrations, checklists, phased verification, handoff notes, or structured final reports.
+- `$repo-change-planner`: use for focused follow-up planning with scoped epics, acceptance criteria, likely files, risks, and verification notes.
 
 Each skill is instruction-only and has a required `SKILL.md` with `name` and `description` metadata.
 
@@ -97,6 +100,8 @@ repo-root/
       commit-report/
         SKILL.md
       long-task-workflow/
+        SKILL.md
+      repo-change-planner/
         SKILL.md
   docs/
     agent/

@@ -60,6 +60,7 @@ Use `$commit-report` only after implementation, when the user asks for a current
 - Do not run full product discovery.
 - Do not revisit stack decisions unless the request requires it.
 - Do not add speculative features.
+- Include relevant regression-preservation and product-fit criteria: existing nearby behavior should remain intact unless explicitly changed, and UI work should fit surrounding layout, spacing, alignment, animation, placement, interaction flow, and style.
 - Match the repo’s existing structure and patterns in the plan.
 - Keep the plan scoped to the user’s request.
 - Do not force-fit broad work into 5 epics. If the request needs more than 5 coherent epics, requires product discovery, mixes unrelated goals, or depends on unresolved architecture decisions, use the "Request Too Broad" output instead of an implementation brief.
@@ -170,6 +171,7 @@ Prefer:
 - Given [state], when [action], then [result].
 - Verify [behavior] by [test, build, or manual check].
 - The implementation must not [forbidden behavior].
+- Existing [nearby behavior] remains intact, or [new UI] follows surrounding [layout, spacing, placement, interaction, or style] conventions.
 
 #### Likely Files or Areas
 
