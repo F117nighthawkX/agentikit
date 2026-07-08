@@ -28,6 +28,8 @@ docs/
     llm-runtime-guidance.md
   adr/
     .gitkeep
+  plans/
+    .gitkeep
 .agents/
   skills/
     commit-report/
@@ -48,6 +50,7 @@ Copy these paths into the root of a repository:
 - `.agents/skills/`
 - `docs/agent/`
 - `docs/adr/`
+- `docs/plans/`
 
 The `.agents/` directory is hidden on some systems, so make sure your copy command includes hidden paths.
 
@@ -66,6 +69,15 @@ Then update the `Project Commands` section in `AGENTS.md`:
 
 Keep `AGENTS.md` short and durable. Put repeatable task workflows into `.agents/skills/`, and put longer reference material in `docs/agent/`.
 
+Generated plan files under `docs/plans/` are working artifacts, not durable documentation. In consuming repositories, consider ignoring generated plan markdown while keeping the placeholder tracked:
+
+```gitignore
+docs/plans/*.md
+!docs/plans/.gitkeep
+```
+
+Use `docs/adr/` for durable architectural decisions after the relevant work is complete.
+
 The `scripts/` directory is for maintaining this source repository. It does not need to be copied into target repositories.
 
 ## Skills
@@ -76,7 +88,7 @@ Included skills:
 
 - `$commit-report`: use for current diff summaries, suggested commit messages, commit-style completion reports, or final reports based on repository changes.
 - `$long-task-workflow`: use for large multi-file tasks, staged implementations, refactors, migrations, checklists, phased verification, handoff notes, or structured final reports.
-- `$repo-change-planner`: use for focused follow-up planning with scoped epics, acceptance criteria, likely files, risks, and verification notes.
+- `$repo-change-planner`: use for focused follow-up planning that writes scoped epics, acceptance criteria, likely files, risks, verification notes, and a handoff prompt to `docs/plans/`.
 
 Each skill is instruction-only and has a required `SKILL.md` with `name` and `description` metadata.
 
@@ -109,6 +121,9 @@ repo-root/
       adr-template.md
       llm-runtime-guidance.md
     adr/
+      .gitkeep
+    plans/
+      .gitkeep
 ```
 
 ## Maintainer Checks
@@ -119,7 +134,7 @@ This repository intentionally does not use package-manager tooling. To verify th
 python scripts/verify_package.py
 ```
 
-That check verifies the expected paths, skill metadata, README copy instructions, and tracked ADR placeholder.
+That check verifies the expected paths, skill metadata, README copy instructions, and tracked `docs/adr/` and `docs/plans/` placeholders.
 
 ## Cross-Agent Notes
 

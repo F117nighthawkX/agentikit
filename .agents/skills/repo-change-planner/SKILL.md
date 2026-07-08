@@ -1,13 +1,13 @@
 ---
 name: repo-change-planner
-description: Use for planning focused follow-up changes in an existing repo. Produces a scoped implementation brief with 1 to 5 epics, acceptance criteria, likely files, risks, and verification notes, or explains why the request is too broad and suggests ways to split it. Does not implement.
+description: Use for planning focused follow-up changes in an existing repo. Writes a scoped implementation brief with 1 to 5 epics, acceptance criteria, likely files, risks, verification notes, and a handoff prompt to docs/plans/<plan-title>.md, or explains why the request is too broad and suggests ways to split it.
 ---
 
 # Repo Change Planner Skill
 
 Use this skill to turn a focused implementation request for an existing repository into a clean implementation brief.
 
-This skill plans only. Do not edit files. Do not implement the change. Do not create an execution checklist. Do not produce a completion report.
+This skill plans only. It may create a new plan file under `docs/plans/`, but it must not implement the requested code change and must not produce a completion report.
 
 The output should be something the user can feed to Codex or another coding agent.
 
@@ -56,17 +56,21 @@ Use `$commit-report` only after implementation, when the user asks for a current
 ## Planning Rules
 
 - Inspect enough repo context to avoid guessing.
-- Do not change files.
+- Do not implement the requested code change.
 - Do not run full product discovery.
 - Do not revisit stack decisions unless the request requires it.
 - Do not add speculative features.
 - Include relevant regression-preservation and product-fit criteria: existing nearby behavior should remain intact unless explicitly changed, and UI work should fit surrounding layout, spacing, alignment, animation, placement, interaction flow, and style.
-- Match the repo’s existing structure and patterns in the plan.
-- Keep the plan scoped to the user’s request.
+- Match the repo's existing structure and patterns in the plan.
+- Keep the plan scoped to the user's request.
 - Do not force-fit broad work into 5 epics. If the request needs more than 5 coherent epics, requires product discovery, mixes unrelated goals, or depends on unresolved architecture decisions, use the "Request Too Broad" output instead of an implementation brief.
 - Separate known facts, assumptions, and open questions.
 - Mark anything that needs user confirmation before implementation.
 - Write acceptance criteria that can be tested.
+- Write the full plan to a new file under `docs/plans/` instead of printing the full plan in chat.
+- Use a filesystem-safe slug derived from the implementation brief title for the plan filename, such as `docs/plans/add-settings-route.md`.
+- If `docs/plans/` does not exist, create it before writing the plan file.
+- If the target plan filename already exists, ask before overwriting it. Do not overwrite an existing plan file silently.
 
 ## Repo Context to Inspect
 
@@ -85,9 +89,38 @@ Look for:
 
 Do not guess file names. If repo access is incomplete, state what could not be inspected.
 
+## Plan File Rules
+
+The plan file is a working artifact for coordinating implementation. It is not durable project documentation and must not be treated as the source of truth for project decisions or implementation details.
+
+Plans can become stale as the user, contributors, or other agents make changes beyond the scope of a particular plan. Agents and users should follow `AGENTS.md` section `7. Documentation and Decisions` for durable documentation, and create an ADR only when applicable after the relevant epic or plan has been completed.
+
+After writing a plan file:
+
+- Do not update plan detail sections such as requested change, assumptions, open questions, out of scope, epics, acceptance criteria, likely files, risks, verification plan, or handoff prompt.
+- Only update checklist state and brief notes under the relevant checklist item.
+- If a problem arises during execution, such as command access, implementation issues, or test failures, add a concise note below the checklist item in question.
+- Mark an epic checklist item complete only after that epic's acceptance criteria have been met.
+
+Every normal implementation brief plan file must include a checklist before the implementation epics:
+
+```md
+## Execution Checklist
+
+- [ ] User confirmed assumptions are valid.
+- [ ] Open questions are resolved or explicitly accepted as non-blocking.
+- [ ] Epic 1 acceptance criteria met.
+- [ ] Epic 2 acceptance criteria met.
+- [ ] Epic 3 acceptance criteria met.
+- [ ] Verification plan completed.
+- [ ] ADR need considered after completion, following `AGENTS.md` section `7. Documentation and Decisions`.
+```
+
+Adjust the number of epic checklist items to match the plan. If there are no open questions, keep the open-question checklist item and mark it complete only when implementation begins with that fact still true.
+
 ## Required Output
 
-If the request is too broad to plan responsibly in 1 to 5 epics, do not produce the normal implementation brief. Produce this instead:
+If the request is too broad to plan responsibly in 1 to 5 epics, do not produce the normal implementation brief. Produce a "Request Too Broad" response in chat using this structure:
 
 # Request Too Broad: [Short Task Name]
 
@@ -116,17 +149,17 @@ For each option, include:
 
 List the decisions or missing information that would make the next planning request focused enough.
 
-Only use the normal implementation brief when the request fits in 1 to 5 coherent epics:
+Only write a normal implementation brief file when the request fits in 1 to 5 coherent epics.
 
 ---
 
-Produce an implementation brief using this structure:
+For a normal implementation brief, write the full plan to `docs/plans/<plan-title>.md` using this structure:
 
 # Implementation Brief: [Short Task Name]
 
 ## Requested Change
 
-Restate the user’s request in your own words.
+Restate the user's request in your own words.
 
 ## Existing Context Found
 
@@ -143,6 +176,18 @@ Mark assumptions that need confirmation before coding.
 List questions that block implementation or could change user-facing behavior, routing, data shape, animation behavior, persistence, or public APIs.
 
 If there are no blocking questions, state that.
+
+## Plan File Use
+
+State that this plan is a working artifact, not a durable source of truth.
+
+State that plan details must not be updated after the file is written. Only checklist state and brief notes under checklist items may be updated.
+
+State that users and agents should follow `AGENTS.md` section `7. Documentation and Decisions` for durable documentation, and create an ADR only when applicable after the relevant epic or plan has been completed.
+
+## Execution Checklist
+
+Include the checklist described in "Plan File Rules."
 
 ## Out of Scope
 
@@ -212,9 +257,41 @@ Write a concise prompt the user can paste into an implementation agent.
 
 The handoff prompt should include:
 
+- The plan file path
 - The requested change
 - The selected epic or epics
 - The relevant assumptions
 - The acceptance criteria
 - The verification plan
 - Whether to use `$long-task-workflow`
+
+After writing the plan file, respond in chat with only an abridged version:
+
+````md
+Created plan file: `docs/plans/<plan-title>.md`
+
+## Requested Change
+
+<brief restatement>
+
+## Assumptions
+
+- <assumption>
+
+## Open Questions
+
+- <question, or "No blocking open questions.">
+
+## Epics
+
+- Epic 1: <title> - <goal>
+- Epic 2: <title> - <goal>
+
+## Handoff Prompt
+
+```text
+<copyable handoff prompt that references docs/plans/<plan-title>.md>
+```
+````
+
+Do not print the full plan in chat.

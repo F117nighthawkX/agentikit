@@ -20,6 +20,7 @@ REQUIRED_FILES = [
     "docs/agent/adr-template.md",
     "docs/agent/llm-runtime-guidance.md",
     "docs/adr/.gitkeep",
+    "docs/plans/.gitkeep",
     "scripts/verify_package.py",
 ]
 
@@ -28,6 +29,7 @@ README_COPY_PATHS = [
     ".agents/skills/",
     "docs/agent/",
     "docs/adr/",
+    "docs/plans/",
 ]
 
 SKILL_NAMES = {
@@ -56,7 +58,7 @@ def main() -> int:
         if not (ROOT / path).is_file():
             errors.append(f"Missing required file: {path}")
 
-    for path in ["docs/adr", ".agents/skills", "docs/agent"]:
+    for path in ["docs/adr", "docs/plans", ".agents/skills", "docs/agent"]:
         if not (ROOT / path).is_dir():
             errors.append(f"Missing required directory: {path}")
 
@@ -67,7 +69,13 @@ def main() -> int:
     for path in README_COPY_PATHS:
         if path not in readme:
             errors.append(f"README is missing copy path: {path}")
-    for phrase in ["hidden", "merge", "python scripts/verify_package.py"]:
+    for phrase in [
+        "hidden",
+        "merge",
+        "python scripts/verify_package.py",
+        "docs/plans/*.md",
+        "!docs/plans/.gitkeep",
+    ]:
         if phrase not in readme:
             errors.append(f"README is missing maintainer/copy guidance: {phrase}")
 
