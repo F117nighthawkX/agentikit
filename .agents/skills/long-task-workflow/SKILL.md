@@ -52,7 +52,7 @@ Checklist:
 - [ ] Implement focused change
 - [ ] Add or update tests
 - [ ] Run verification
-- [ ] Simplification pass
+- [ ] Simplification pass, including comment-preservation check
 - [ ] Final report
 ```
 
@@ -137,7 +137,7 @@ Verification:
 - `<command>` - passed, failed, or not run.
 
 Simplification pass:
-- <what was simplified, or no meaningful simplification needed>
+- <what was simplified, or no meaningful simplification needed; mention any non-trivial existing comment removal or rewrite>
 
 Follow-up steps:
 - <guidance for anything the user should do next, or none>

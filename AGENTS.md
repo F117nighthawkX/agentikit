@@ -71,6 +71,7 @@ Do preserve:
 
 After code changes, perform a simplification pass:
 - Remove abstraction, wrappers, dead code, or flexibility introduced by your change that is not needed.
+- Do not treat simplification as permission to remove pre-existing comments; follow the comment handling rules in Section 4.
 - Check for duplication introduced by your change.
 - Confirm the code still follows repo conventions and these instructions.
 - Mention what was simplified, or state that no meaningful simplification was needed.
@@ -87,6 +88,13 @@ When editing existing code:
 - Match existing style even if you disagree with it.
 - If an existing convention is harmful, mention it and ask before changing direction.
 - If you notice unrelated dead code or bugs, report them instead of fixing them silently.
+
+Comment handling:
+- Preserve existing comments by default, including inline comments, block comments, doc comments, and TODOs.
+- If you change code that a nearby comment describes, update only the parts of the comment needed to keep it accurate.
+- Do not remove a comment merely because it feels obvious, verbose, stylistically different, or not how you would write it.
+- Remove a pre-existing comment only when it is blatantly wrong, outdated, misleading, or attached to code that the requested change removes.
+- If you remove or materially rewrite a non-trivial existing comment, mention why in the final report.
 
 When your change creates orphans:
 - Remove imports, variables, functions, files, or tests made unused by your change.
