@@ -15,6 +15,7 @@ REQUIRED_FILES = [
     "LICENSE",
     ".agents/skills/commit-report/SKILL.md",
     ".agents/skills/long-task-workflow/SKILL.md",
+    ".agents/skills/repo-change-planner/SKILL.md",
     "docs/agent/architecture-boundaries.md",
     "docs/agent/adr-template.md",
     "docs/agent/llm-runtime-guidance.md",
@@ -32,6 +33,7 @@ README_COPY_PATHS = [
 SKILL_NAMES = {
     ".agents/skills/commit-report/SKILL.md": "commit-report",
     ".agents/skills/long-task-workflow/SKILL.md": "long-task-workflow",
+    ".agents/skills/repo-change-planner/SKILL.md": "repo-change-planner",
 }
 
 
