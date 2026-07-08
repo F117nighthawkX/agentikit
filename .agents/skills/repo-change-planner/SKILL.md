@@ -7,7 +7,7 @@ description: Use for planning focused follow-up changes in an existing repo. Wri
 
 Use this skill to turn a focused implementation request for an existing repository into a clean implementation brief.
 
-This skill plans only. It may create a new plan file under `docs/plans/`, but it must not implement the requested code change and must not produce a completion report.
+This skill plans only. It may create a new plan file under `docs/plans/`, but it must not implement the requested change or produce a completion report.
 
 The output should be something the user can feed to Codex or another coding agent.
 
@@ -47,11 +47,9 @@ Do not use this skill for:
 
 ## Relationship to Other Skills
 
-Use `$repo-change-planner` to create the implementation brief.
-
-Use `$long-task-workflow` later if one of the planned epics is large, risky, multi-phase, or touches several layers.
-
-Use `$commit-report` only after implementation, when the user asks for a current diff summary, suggested commit message, or commit-style completion report.
+- Use `$repo-change-planner` to create the implementation brief.
+- Use `$long-task-workflow` later if one of the planned epics is large, risky, multi-phase, or touches several layers.
+- Use `$commit-report` only after implementation, when the user asks for a current diff summary, suggested commit message, or commit-style completion report.
 
 ## Planning Rules
 
@@ -60,15 +58,14 @@ Use `$commit-report` only after implementation, when the user asks for a current
 - Do not run full product discovery.
 - Do not revisit stack decisions unless the request requires it.
 - Do not add speculative features.
-- Include relevant regression-preservation and product-fit criteria: existing nearby behavior should remain intact unless explicitly changed, and UI work should fit surrounding layout, spacing, alignment, animation, placement, interaction flow, and style.
+- Include relevant regression-preservation and product-fit criteria.
 - Match the repo's existing structure and patterns in the plan.
 - Keep the plan scoped to the user's request.
 - Do not force-fit broad work into 5 epics. If the request needs more than 5 coherent epics, requires product discovery, mixes unrelated goals, or depends on unresolved architecture decisions, use the "Request Too Broad" output instead of an implementation brief.
 - Separate known facts, assumptions, and open questions.
 - Mark anything that needs user confirmation before implementation.
 - Write acceptance criteria that can be tested.
-- Write the full plan to a new file under `docs/plans/` instead of printing the full plan in chat.
-- Use a filesystem-safe slug derived from the implementation brief title for the plan filename, such as `docs/plans/add-settings-route.md`.
+- Write the full plan to a new file under `docs/plans/` instead of printing the full plan in chat. Use a filesystem-safe slug derived from the title, such as `docs/plans/add-settings-route.md`.
 - If `docs/plans/` does not exist, create it before writing the plan file.
 - If the target plan filename already exists, ask before overwriting it. Do not overwrite an existing plan file silently.
 
@@ -91,15 +88,13 @@ Do not guess file names. If repo access is incomplete, state what could not be i
 
 ## Plan File Rules
 
-The plan file is a working artifact for coordinating implementation. It is not durable project documentation and must not be treated as the source of truth for project decisions or implementation details.
-
-Plans can become stale as the user, contributors, or other agents make changes beyond the scope of a particular plan. Agents and users should follow `AGENTS.md` section `7. Documentation and Decisions` for durable documentation, and create an ADR only when applicable after the relevant epic or plan has been completed.
+The plan file is a working artifact, not durable project documentation. Durable decisions belong in `docs/adr/` only when `AGENTS.md` and `docs/agent/adr-template.md` call for an ADR.
 
 After writing a plan file:
 
 - Do not update plan detail sections such as requested change, assumptions, open questions, out of scope, epics, acceptance criteria, likely files, risks, verification plan, or handoff prompt.
 - Only update checklist state and brief notes under the relevant checklist item.
-- If a problem arises during execution, such as command access, implementation issues, or test failures, add a concise note below the checklist item in question.
+- If command access, implementation issues, or test failures arise during execution, add a concise note below the checklist item in question.
 - Mark an epic checklist item complete only after that epic's acceptance criteria have been met.
 
 Every normal implementation brief plan file must include a checklist before the implementation epics:
@@ -113,7 +108,7 @@ Every normal implementation brief plan file must include a checklist before the 
 - [ ] Epic 2 acceptance criteria met.
 - [ ] Epic 3 acceptance criteria met.
 - [ ] Verification plan completed.
-- [ ] ADR need considered after completion, following `AGENTS.md` section `7. Documentation and Decisions`.
+- [ ] ADR need considered after completion.
 ```
 
 Adjust the number of epic checklist items to match the plan. If there are no open questions, keep the open-question checklist item and mark it complete only when implementation begins with that fact still true.
@@ -126,7 +121,7 @@ If the request is too broad to plan responsibly in 1 to 5 epics, do not produce 
 
 ## Why This Should Be Split
 
-Explain the concrete scope problem. Name whether the issue is too many unrelated outcomes, too many layers, missing product decisions, unresolved architecture choices, migration risk, unclear acceptance criteria, or another specific blocker.
+Explain the concrete scope problem: unrelated outcomes, too many layers, missing product decisions, unresolved architecture choices, migration risk, unclear acceptance criteria, or another specific blocker.
 
 ## What Can Be Planned Now
 
@@ -179,11 +174,7 @@ If there are no blocking questions, state that.
 
 ## Plan File Use
 
-State that this plan is a working artifact, not a durable source of truth.
-
-State that plan details must not be updated after the file is written. Only checklist state and brief notes under checklist items may be updated.
-
-State that users and agents should follow `AGENTS.md` section `7. Documentation and Decisions` for durable documentation, and create an ADR only when applicable after the relevant epic or plan has been completed.
+State the plan-file rules from "Plan File Rules" concisely.
 
 ## Execution Checklist
 
@@ -197,9 +188,7 @@ Include tempting cleanup, unrelated refactors, unrelated styling updates, and fu
 
 ## Implementation Epics
 
-Create 1 to 5 epics.
-
-For each epic, use:
+Create 1 to 5 epics. For each epic, use:
 
 ### Epic [number]: [name]
 
@@ -209,9 +198,7 @@ For each epic, use:
 
 #### Acceptance Criteria
 
-Use testable criteria.
-
-Prefer:
+Use testable criteria. Prefer:
 
 - Given [state], when [action], then [result].
 - Verify [behavior] by [test, build, or manual check].

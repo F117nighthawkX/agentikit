@@ -16,17 +16,15 @@ Fill these in for each repository:
 
 If a command is missing, search the repo for scripts, task files, CI config, package manifests, Makefiles, or docs before asking.
 
-## 1. Clarify, Plan, Recommend
+## 1. Scope and Plan
 
 Do not assume. Do not hide confusion. Surface tradeoffs and recommend clearly.
 
-Before non-trivial coding:
-- Restate the intended outcome in your own words.
-- State assumptions, constraints, success criteria, and expected impact.
-- Name the files, modules, or behavior you expect to touch.
-- Name nearby areas you plan to leave alone.
-- Give a 2 to 5 step plan. Each step should include how it will be verified.
-- Reject unrequested abstractions, frameworks, compatibility layers, or speculative features before coding.
+Before non-trivial coding, inspect enough context to state:
+- Intended outcome, assumptions, constraints, success criteria, and expected impact.
+- Files, modules, behavior, and nearby areas expected to remain untouched.
+- A 2 to 5 step plan with verification for each step.
+- Any unrequested abstraction, framework, compatibility layer, or speculative feature you are rejecting.
 
 Ask before editing when:
 - The request has multiple plausible meanings.
@@ -55,9 +53,9 @@ Do not add a new pattern before checking whether the repo already has one.
 
 If code seems oddly structured, assume there may be a reason. Ask or investigate before replacing it.
 
-## 3. Simplicity and Maintainability
+## 3. Implement Surgically
 
-Use the smallest correct implementation. Nothing speculative.
+Use the smallest correct implementation. Touch only what the task requires. Clean up only your own mess.
 
 Do not add:
 - Features beyond what was requested.
@@ -72,19 +70,6 @@ Do preserve:
 - Security boundaries and necessary validation.
 - Clear naming and direct control flow.
 - Existing public contracts unless the task explicitly changes them.
-
-After code changes, perform a simplification pass:
-- Remove abstraction, wrappers, dead code, or flexibility introduced by your change that is not needed.
-- Do not treat simplification as permission to remove pre-existing comments; follow the comment handling rules in Section 4.
-- Check for duplication introduced by your change.
-- Confirm the code still follows repo conventions and these instructions.
-- Mention what was simplified, or state that no meaningful simplification was needed.
-
-Ask: would a senior engineer say this is overcomplicated? If yes, simplify.
-
-## 4. Surgical Changes
-
-Touch only what the task requires. Clean up only your own mess.
 
 When editing existing code:
 - Do not improve adjacent code, comments, formatting, or names unless required.
@@ -106,7 +91,18 @@ When your change creates orphans:
 
 Every changed line should trace back to the user's request or to verification required by that request.
 
-## 5. Verification Contract
+## 4. Simplify Before Handoff
+
+After code changes, perform a simplification pass:
+- Remove abstraction, wrappers, dead code, or flexibility introduced by your change that is not needed.
+- Check for duplication introduced by your change.
+- Confirm the code still follows repo conventions and these instructions.
+- Preserve comments according to Section 3.
+- Mention what was simplified, or state that no meaningful simplification was needed.
+
+Ask: would a senior engineer say this is overcomplicated? If yes, simplify.
+
+## 5. Verify
 
 Define success criteria and loop until verified.
 
@@ -128,7 +124,7 @@ Never claim verification you did not run. Final reports must state:
 
 If verification fails, report the failure clearly and explain the likely cause if known.
 
-## 6. Communication and Uncertainty
+## 6. Communicate Uncertainty
 
 Say what is known, what is inferred, and what is unknown.
 
@@ -156,7 +152,7 @@ Update docs when a decision was made between real alternatives, a non-obvious co
 
 Do not document obvious implementation details, duplicate git history, or add docs just in case.
 
-Use `docs/adr/` for architectural decisions. See `docs/agent/adr-template.md`.
+Use `docs/adr/` only for durable architectural decisions. See `docs/agent/adr-template.md`.
 
 ## Optional Reading and Skills
 
@@ -167,5 +163,5 @@ Read optional docs only when the task calls for them:
 
 Use available skills when the task matches them:
 - `$commit-report`: use for explicit current diff summaries, suggested commit messages, or commit-style completion reports.
-- `$repo-change-planner`: use before implementation when a focused follow-up request in an existing repo should be written to `docs/plans/<plan-title>.md` as a scoped implementation brief with 1 to 5 epics, acceptance criteria, likely files, risks, verification notes, a checklist, and a handoff prompt, or when the request should be split before planning. This skill plans only; it may create a plan file but does not implement.
-- `$long-task-workflow`: use for executing large multi-file coding tasks, staged implementations, refactors, migrations, or work that needs a checklist, phased verification, handoff notes, or a structured final report. It may be used to implement an epic produced by `$repo-change-planner` when that epic is large or risky enough to need phased execution.
+- `$repo-change-planner`: use before implementation when a focused follow-up request should become a scoped plan under `docs/plans/`, or when the request should be split before planning. This skill plans only.
+- `$long-task-workflow`: use for executing large multi-file tasks, staged implementations, refactors, migrations, or work needing a checklist, phased verification, handoff notes, or a structured final report.

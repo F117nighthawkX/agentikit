@@ -5,7 +5,7 @@ description: Use when asked to inspect current repository changes, summarize a d
 
 # Commit Report Skill
 
-Use this skill to summarize the current repository changes and produce a suggested commit message without implementing new code.
+Use this skill to summarize current repository changes and produce a suggested commit message or commit-style report.
 
 You are working in the current repository.
 
@@ -13,7 +13,7 @@ Read first:
 
 - `AGENTS.md` for repository-specific safety, verification, scope, and communication guidance.
 
-This skill is the source of truth for commit-message rules, report structure, and commit-style completion reports. If `AGENTS.md` contains different commit or report formatting rules, follow this skill unless the user explicitly says otherwise.
+This skill owns commit-message rules, report structure, and commit-style completion reports. Follow `AGENTS.md` for general scope, verification, and uncertainty guidance.
 
 Then inspect the current repository changes.
 
@@ -44,20 +44,13 @@ If staged changes exist, inspect both staged and unstaged changes. Report whethe
 
 ## Rules
 
-The commit-message and report rules in this skill are authoritative for this task. Also follow relevant `AGENTS.md` guidance for surgical changes, uncertainty, verification, and prohibited actions.
-
 Use the 50/72 rule:
 
 - Commit subject should be 50 characters or fewer when practical.
 - Wrap body lines at 72 characters when practical.
 - Keep the subject short. Put planning details in the body.
 
-Use a commit body when the change is more significant than a trivial edit.
-For simple one-file, few-line, typo, formatting, or documentation-only changes,
-the subject alone is enough. For changes that touch business logic, UI
-functionality, public interfaces, persistence, security, build behavior, or
-multiple related files, include a short body that summarizes the implementation
-in one to three sentences.
+Use a commit body when the change is more significant than a trivial edit. For simple one-file, few-line, typo, formatting, or documentation-only changes, the subject alone is enough. For changes that touch business logic, UI functionality, public interfaces, persistence, security, build behavior, or multiple related files, include a short body that summarizes the implementation in one to three sentences.
 
 Use imperative mood in the subject:
 
@@ -95,7 +88,7 @@ Good:
 ```text
 - `src/auth/session.ts`
 - `tests/session.test.ts`
-- `docs/agent/commit-report-prompt.md`
+- `.agents/skills/commit-report/SKILL.md`
 ```
 
 Bad:
@@ -104,9 +97,7 @@ Bad:
 - `C:\Users\Name\Documents\project\src\auth\session.ts`
 ```
 
-If the diff maps clearly to an issue, ticket, bucket, epic, milestone, task file,
-or planning document, include it. If there is no clear planning reference, omit
-the planning reference line entirely.
+If the diff maps clearly to an issue, ticket, bucket, epic, milestone, task file, or planning document, include it. If there is no clear planning reference, omit the planning reference line entirely.
 
 Use `Follow-up steps` only for work that remains outside the verified diff: manual checks, deployment notes, generated-file refreshes, environment setup, review reminders, or commands that should be run later. Do not use it to repeat implemented changes.
 

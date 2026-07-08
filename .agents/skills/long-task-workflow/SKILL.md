@@ -7,7 +7,7 @@ description: Use for large multi-file coding tasks, staged implementations, refa
 
 Use this skill for large multi-file tasks, staged implementations, refactors, migrations, or work that may span more than one session.
 
-The goal is to maintain enough structure to avoid losing the thread without creating busywork.
+The goal is enough structure to keep scope, progress, and verification clear without creating busywork.
 
 Read first:
 
@@ -25,7 +25,7 @@ Use this workflow when:
 
 For small changes, follow root `AGENTS.md` and skip this skill.
 
-## Starting Checklist
+## Start
 
 Before coding, produce a short plan with:
 
@@ -33,7 +33,7 @@ Before coding, produce a short plan with:
 - Assumptions.
 - Non-goals.
 - Expected files or areas touched.
-- Relevant existing behavior, flow, or UI fit constraints that should remain intact.
+- Relevant existing behavior, flow, public contract, or UI fit constraints that should remain intact.
 - Risks.
 - Verification plan.
 
@@ -125,7 +125,7 @@ End large tasks with:
 - Follow-up steps, if any.
 - Suggested commit message when useful.
 
-Use the `$commit-report` skill only when the user asks for a commit-style report, a current diff summary, or a suggested commit message. Base any suggested commit message only on the verified diff. Do not stage, unstage, commit, amend, reset, or push unless the user explicitly asks.
+Use `$commit-report` only when the user asks for a commit-style report, current diff summary, or suggested commit message. Base commit messages only on verified changes, and do not stage or commit unless explicitly asked.
 
 Suggested compact final report format when a full commit-style report is not needed:
 

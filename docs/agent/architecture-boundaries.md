@@ -115,10 +115,4 @@ Before editing UI structure or state:
 
 ## Architecture Decision Trigger
 
-Create or update an ADR when the change:
-- Chooses between real architectural alternatives.
-- Introduces a new dependency, service boundary, persistence model, or public API pattern.
-- Changes how future work should be done.
-- Rejects a plausible option that another developer may ask about later.
-
-Use `docs/agent/adr-template.md`.
+If an architecture change creates a durable decision, use `docs/agent/adr-template.md` for ADR criteria and format.
