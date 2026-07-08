@@ -1,6 +1,6 @@
 ---
 name: repo-change-planner
-description: Use for planning focused follow-up changes in an existing repo. Produces a scoped implementation brief with 1 to 3 epics, acceptance criteria, likely files, risks, and verification notes. Does not implement.
+description: Use for planning focused follow-up changes in an existing repo. Produces a scoped implementation brief with 1 to 5 epics, acceptance criteria, likely files, risks, and verification notes, or explains why the request is too broad and suggests ways to split it. Does not implement.
 ---
 
 # Repo Change Planner Skill
@@ -23,7 +23,7 @@ Use this skill when:
 - Stack, framework, structure, and setup decisions are already made.
 - The user has a focused follow-up request.
 - The request is larger than a simple one-line fix.
-- The request can probably be described in 1 to 3 implementation epics.
+- The request can probably be described in 1 to 5 implementation epics, or is close enough that the planner should explain why it should be split before implementation.
 - The user wants a plan before giving the work to an implementation agent.
 
 Good examples:
@@ -62,6 +62,7 @@ Use `$commit-report` only after implementation, when the user asks for a current
 - Do not add speculative features.
 - Match the repo’s existing structure and patterns in the plan.
 - Keep the plan scoped to the user’s request.
+- Do not force-fit broad work into 5 epics. If the request needs more than 5 coherent epics, requires product discovery, mixes unrelated goals, or depends on unresolved architecture decisions, use the "Request Too Broad" output instead of an implementation brief.
 - Separate known facts, assumptions, and open questions.
 - Mark anything that needs user confirmation before implementation.
 - Write acceptance criteria that can be tested.
@@ -84,6 +85,39 @@ Look for:
 Do not guess file names. If repo access is incomplete, state what could not be inspected.
 
 ## Required Output
+
+If the request is too broad to plan responsibly in 1 to 5 epics, do not produce the normal implementation brief. Produce this instead:
+
+# Request Too Broad: [Short Task Name]
+
+## Why This Should Be Split
+
+Explain the concrete scope problem. Name whether the issue is too many unrelated outcomes, too many layers, missing product decisions, unresolved architecture choices, migration risk, unclear acceptance criteria, or another specific blocker.
+
+## What Can Be Planned Now
+
+List any coherent subset that can be planned safely with the current repo context.
+
+If no subset can be planned safely, state that and explain what information is missing.
+
+## Recommended Split Options
+
+Suggest 2 to 5 viable ways to break the request into focused follow-up prompts.
+
+For each option, include:
+
+- Suggested prompt
+- Expected scope
+- Why this split is safer
+- Whether `$repo-change-planner` or `$long-task-workflow` should be used next
+
+## Questions Before Planning
+
+List the decisions or missing information that would make the next planning request focused enough.
+
+Only use the normal implementation brief when the request fits in 1 to 5 coherent epics:
+
+---
 
 Produce an implementation brief using this structure:
 
@@ -117,7 +151,7 @@ Include tempting cleanup, unrelated refactors, unrelated styling updates, and fu
 
 ## Implementation Epics
 
-Create 1 to 3 epics.
+Create 1 to 5 epics.
 
 For each epic, use:
 

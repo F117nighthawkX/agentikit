@@ -163,5 +163,5 @@ Read optional docs only when the task calls for them:
 
 Use available skills when the task matches them:
 - `$commit-report`: use for explicit current diff summaries, suggested commit messages, or commit-style completion reports.
-- `$repo-change-planner`: use before implementation when a focused follow-up request in an existing repo should be turned into a scoped implementation brief with 1 to 3 epics, acceptance criteria, likely files, risks, and verification notes. This skill plans only; it does not implement.
+- `$repo-change-planner`: use before implementation when a focused follow-up request in an existing repo should be turned into a scoped implementation brief with 1 to 5 epics, acceptance criteria, likely files, risks, and verification notes, or when the request should be split before planning. This skill plans only; it does not implement.
 - `$long-task-workflow`: use for executing large multi-file coding tasks, staged implementations, refactors, migrations, or work that needs a checklist, phased verification, handoff notes, or a structured final report. It may be used to implement an epic produced by `$repo-change-planner` when that epic is large or risky enough to need phased execution.
