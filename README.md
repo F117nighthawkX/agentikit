@@ -12,7 +12,7 @@ The first version was based on ideas from [`multica-ai/andrej-karpathy-skills`](
 
 From there, I reviewed several proposed changes and pull requests against that project, selected the parts that seemed broadly useful, and narrowed the guidance into a smaller, tool-neutral structure. The goal was not to copy every rule. It was to keep the pieces that improve coding-agent behavior, remove rules that felt too tool-specific or too heavy for normal work, and split longer workflows into optional docs or skills.
 
-Agentikit keeps the same general spirit: agents should clarify before guessing, make surgical changes, preserve existing behavior, fit surrounding product patterns, avoid speculative abstractions, verify their work, and report uncertainty honestly. It adapts those ideas for `AGENTS.md`, reusable skills, and project guidance that can be shared across repositories.
+Agentikit keeps the same general spirit: agents should clarify before guessing, make surgical changes, preserve existing behavior, fit surrounding product patterns, avoid speculative abstractions, verify their work, and report uncertainty honestly. Here, surgical means minimizing unnecessary total complexity, not imports or dependency count: established, project-fitting dependencies are welcome when their benefits justify their footprint, while straightforward native logic should stay with the language, platform, or standard library. Agentikit adapts those ideas for `AGENTS.md`, reusable skills, and project guidance that can be shared across repositories.
 
 This project is not affiliated with Andrej Karpathy, Multica, or the original `andrej-karpathy-skills` repository.
 

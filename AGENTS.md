@@ -24,7 +24,7 @@ Before non-trivial coding, inspect enough context to state:
 - Intended outcome, assumptions, constraints, success criteria, and expected impact.
 - Files, modules, behavior, and nearby areas expected to remain untouched.
 - A 2 to 5 step plan with verification for each step.
-- Any unrequested abstraction, framework, compatibility layer, or speculative feature you are rejecting.
+- Any unrequested abstraction, framework adoption or replacement, compatibility layer, or speculative feature you are rejecting.
 
 Ask before editing when:
 - The request has multiple plausible meanings.
@@ -49,13 +49,13 @@ Before changing existing behavior, identify what nearby behavior must remain int
 
 For UI work, inspect the surrounding flow and visual system before implementing. Layout, spacing, alignment, animation, placement, affordances, and state behavior should feel like a natural extension of the project. Ask whether someone using the project could tell the new work was added later; if yes, adjust within scope or report the mismatch.
 
-Do not add a new pattern before checking whether the repo already has one.
+Check for an existing pattern before adding a new one. Treat existing patterns as evidence and a consistency default, not a veto: use a better framework-native or ecosystem-standard approach when it materially improves correctness, maintainability, or project fit, and explain meaningful tradeoffs.
 
 If code seems oddly structured, assume there may be a reason. Ask or investigate before replacing it.
 
 ## 3. Implement Surgically
 
-Use the smallest correct implementation. Touch only what the task requires. Clean up only your own mess.
+Use the smallest correct implementation: minimize unnecessary total complexity across locally owned code and dependency, transitive, build, runtime, and operational costs. Do not optimize for the fewest imports, dependencies, API calls, lines, or the smallest diff. Touch only what the task requires. Clean up only your own mess.
 
 Do not add:
 - Features beyond what was requested.
@@ -63,7 +63,13 @@ Do not add:
 - Configurability that was not requested.
 - Error handling for impossible states.
 - Compatibility layers without a current need.
-- New dependencies when a small local implementation or existing dependency is enough.
+
+When choosing implementation tools:
+- Use language, platform, or standard-library capabilities for straightforward logic they handle cleanly.
+- Use supported APIs from declared project dependencies normally. A new import from one is not a new dependency.
+- Prefer a focused, established, project-fitting dependency over bespoke code when meaningful correctness, reliability, security, standards, interoperability, clarity, or maintenance benefits and avoided ownership outweigh its footprint, even for a single call site or short helper.
+- Avoid redundant dependencies when a declared dependency offers a comparably clear, reliable, and maintainable solution. Avoid purpose-mismatched or disproportionate dependencies, but do not recreate established ecosystem functionality merely to keep the dependency list smaller.
+- Treat an ordinary, proportionate library addition as normal implementation. Ask before adopting or replacing a major framework or adding a dependency that materially changes architecture, the toolchain, runtime, deployment, security boundaries, or public contracts; separate environment, network, and tool-execution permissions still apply.
 
 Do preserve:
 - Established patterns that improve long-term maintainability or testability.

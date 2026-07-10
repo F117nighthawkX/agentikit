@@ -38,6 +38,48 @@ SKILL_NAMES = {
     ".agents/skills/repo-change-planner/SKILL.md": "repo-change-planner",
 }
 
+AGENT_GUIDANCE_PHRASES = {
+    "Do not optimize for the fewest imports, dependencies, API calls, lines, or the smallest diff.": (
+        "AGENTS.md is missing the total-complexity rule"
+    ),
+    "A new import from one is not a new dependency.": (
+        "AGENTS.md is missing the declared-dependency import distinction"
+    ),
+    "Prefer a focused, established, project-fitting dependency": (
+        "AGENTS.md is missing the project-fitting dependency allowance"
+    ),
+    "Use language, platform, or standard-library capabilities": (
+        "AGENTS.md is missing the native and standard-library safeguard"
+    ),
+    "Treat an ordinary, proportionate library addition as normal implementation.": (
+        "AGENTS.md is missing the impact-based dependency approval boundary"
+    ),
+}
+
+ARCHITECTURE_GUIDANCE_PHRASES = {
+    "Do not add or reject a dependency reflexively.": (
+        "Architecture guidance is missing the balanced dependency rule"
+    ),
+    "A package present only transitively is not a declared project dependency": (
+        "Architecture guidance is missing the transitive-dependency distinction"
+    ),
+    "An ordinary, proportionate library addition does not require separate design approval": (
+        "Architecture guidance is missing the impact-based approval boundary"
+    ),
+    "Ask before adopting or replacing a major framework": (
+        "Architecture guidance is missing the architecture-scale approval safeguard"
+    ),
+}
+
+FORBIDDEN_DEPENDENCY_PHRASES = {
+    "Do not add dependencies by default.": (
+        "Architecture guidance restored the default-deny dependency rule"
+    ),
+    "New dependencies when a small local implementation or existing dependency is enough.": (
+        "AGENTS.md restored the local-first dependency rule"
+    ),
+}
+
 
 def read_text(path: str) -> str:
     return (ROOT / path).read_text(encoding="utf-8")
@@ -83,6 +125,20 @@ def main() -> int:
     for command in ["Install", "Test", "Lint", "Typecheck", "Build", "Format"]:
         if f"- {command}: `TODO`" not in agents:
             errors.append(f"AGENTS.md is missing template command: {command}")
+
+    for phrase, error in AGENT_GUIDANCE_PHRASES.items():
+        if phrase not in agents:
+            errors.append(error)
+
+    architecture = read_text("docs/agent/architecture-boundaries.md")
+    for phrase, error in ARCHITECTURE_GUIDANCE_PHRASES.items():
+        if phrase not in architecture:
+            errors.append(error)
+
+    dependency_guidance = agents + architecture
+    for phrase, error in FORBIDDEN_DEPENDENCY_PHRASES.items():
+        if phrase in dependency_guidance:
+            errors.append(error)
 
     for path, name in SKILL_NAMES.items():
         skill = read_text(path)

@@ -44,7 +44,7 @@ Example:
 ```md
 Plan:
 1. Inspect current flow and tests. Verify by identifying the owner module.
-2. Add the smallest behavior change. Verify with focused tests.
+2. Implement a focused, complete, project-fitting behavior change. Verify with focused tests.
 3. Update affected tests. Verify targeted test command.
 4. Run final check. Verify lint or build if relevant.
 

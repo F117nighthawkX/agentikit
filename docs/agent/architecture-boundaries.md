@@ -39,16 +39,21 @@ If the repository intentionally uses a different pattern, follow the repository.
 
 ## Dependencies
 
-Do not add dependencies by default.
+Do not add or reject a dependency reflexively. Compare the total lifecycle value and cost of the local and package options, and scale the depth of the evaluation to the dependency's risk and impact. A routine, well-known, low-footprint library should not require an architecture essay or user interruption; an unfamiliar, security-sensitive, heavyweight, or operationally significant dependency deserves deeper review.
 
-Before adding one:
-- Check whether the repo already has a dependency or utility that solves the problem.
-- Check maintenance, license, install size, runtime cost, security posture, and platform compatibility.
-- Explain why a local implementation is worse.
-- Prefer official, established libraries over obscure packages.
-- Update manifests, lockfiles, docs, and build config together.
+First check whether the language, platform, standard library, or a declared project dependency already solves the problem cleanly. When a declared dependency offers a comparably clear, reliable, and maintainable solution, prefer it over an overlapping package. A package present only transitively is not a declared project dependency; evaluate and declare it directly before importing it.
 
-Do not add frameworks, codegen, state managers, queues, ORMs, or build tools without explicit approval.
+A focused, established dependency may be better than bespoke code—even for a single call site or short helper—when meaningful correctness, reliability, security, standards compliance, interoperability, clarity, testability, or maintenance benefits and avoided ownership outweigh its footprint. Short local code is not automatically cheaper, a one-line package call is not automatically better, and single use is not automatically bloat.
+
+Before adding one, consider:
+- Capability: whether each option handles the behavior and edge cases correctly.
+- Fit: whether the capability is relevant and proportionate, the dependency's broader purpose fits the project's responsibilities and constraints, and the choice aligns with the current stack, established architecture, and evidenced direction. General-purpose ecosystem libraries may fit without being specific to the application's business domain.
+- Health: maintenance, API stability, license, security posture, supply-chain exposure, and platform compatibility.
+- Footprint: direct and transitive dependencies, install or bundle size, startup and runtime cost, build impact, and operational burden.
+
+Prefer focused, official or established libraries over obscure or overly broad packages when a dependency is justified. Reject packages whose broader purpose or surface is incongruent with the project when only an incidental helper is attractive. Update manifests, lockfiles, docs, build config, and verification together when applicable.
+
+Ask before adopting or replacing a major framework or introducing a dependency that materially changes architecture, code generation, state ownership, persistence, messaging, toolchains, runtimes, deployment, security boundaries, or public contracts. An ordinary, proportionate library addition does not require separate design approval solely because it changes a manifest or lockfile; environment, network, and tool-execution permissions still apply.
 
 ## Data and Migrations
 
