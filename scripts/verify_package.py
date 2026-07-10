@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
-REQUIRED_FILES = [
+SOURCE_REQUIRED_FILES = [
     "AGENTS.md",
     "README.md",
     "LICENSE",
@@ -20,17 +20,36 @@ REQUIRED_FILES = [
     "docs/agent/adr-template.md",
     "docs/agent/llm-runtime-guidance.md",
     "docs/adr/.gitkeep",
+    "docs/adr/0001-keep-agent-guidance-in-copyable-files.md",
     "docs/plans/.gitkeep",
     "scripts/verify_package.py",
 ]
 
-README_COPY_PATHS = [
+README_REUSABLE_PATHS = [
     "AGENTS.md",
     ".agents/skills/",
     "docs/agent/",
     "docs/adr/",
     "docs/plans/",
 ]
+
+README_DISTRIBUTION_PHRASES = {
+    "Choose any of these reusable components": (
+        "README does not describe the kit paths as selectable components"
+    ),
+    "This README and the `scripts/` directory are source-repository files and should not be copied": (
+        "README does not exclude its source-only overview and maintenance scripts"
+    ),
+    "The `docs/adr/` directory convention, recreated empty or copied with only `.gitkeep`": (
+        "README does not define the reusable ADR directory convention"
+    ),
+    "The `docs/plans/` directory convention, recreated empty or copied with only `.gitkeep`": (
+        "README does not define the reusable plan directory convention"
+    ),
+    "Files under `docs/adr/*.md` and `docs/plans/*.md` are repository-specific records and should not be copied.": (
+        "README does not exclude repository-specific ADR and plan records"
+    ),
+}
 
 SKILL_NAMES = {
     ".agents/skills/commit-report/SKILL.md": "commit-report",
@@ -53,6 +72,31 @@ AGENT_GUIDANCE_PHRASES = {
     ),
     "Treat an ordinary, proportionate library addition as normal implementation.": (
         "AGENTS.md is missing the impact-based dependency approval boundary"
+    ),
+    "Keep broadly applicable agent rules in `AGENTS.md`, repeatable workflows in `.agents/skills/`, and longer task-specific guidance in `docs/agent/`.": (
+        "AGENTS.md is missing the portable guidance ownership rule"
+    ),
+    "Agent-operational guidance must not exist only in a README.": (
+        "AGENTS.md allows operational guidance to depend only on README"
+    ),
+    "Files under `docs/adr/` and `docs/plans/` are repository-specific records.": (
+        "AGENTS.md is missing the repository-specific record boundary"
+    ),
+    "add a small tool-specific pointer to the canonical skill files": (
+        "AGENTS.md is missing the cross-agent skill discovery fallback"
+    ),
+}
+
+ADR_DECISION_PHRASES = {
+    "Status: Accepted": "Agentikit's package-contract ADR is not accepted",
+    "Agent-operational guidance must have an authoritative home": (
+        "Agentikit's ADR is missing the agent-guidance authority decision"
+    ),
+    "`docs/adr/` and `docs/plans/` are reusable directory conventions": (
+        "Agentikit's ADR is missing the directory and record distribution decision"
+    ),
+    "It will not attempt to determine semantic equivalence across documentation.": (
+        "Agentikit's ADR is missing the verifier boundary"
     ),
 }
 
@@ -96,7 +140,7 @@ def has_frontmatter_field(text: str, field: str, value: str | None = None) -> bo
 def main() -> int:
     errors: list[str] = []
 
-    for path in REQUIRED_FILES:
+    for path in SOURCE_REQUIRED_FILES:
         if not (ROOT / path).is_file():
             errors.append(f"Missing required file: {path}")
 
@@ -108,9 +152,12 @@ def main() -> int:
         return report(errors)
 
     readme = read_text("README.md")
-    for path in README_COPY_PATHS:
+    for path in README_REUSABLE_PATHS:
         if path not in readme:
-            errors.append(f"README is missing copy path: {path}")
+            errors.append(f"README is missing reusable path: {path}")
+    for phrase, error in README_DISTRIBUTION_PHRASES.items():
+        if phrase not in readme:
+            errors.append(error)
     for phrase in [
         "hidden",
         "merge",
@@ -128,6 +175,11 @@ def main() -> int:
 
     for phrase, error in AGENT_GUIDANCE_PHRASES.items():
         if phrase not in agents:
+            errors.append(error)
+
+    adr = read_text("docs/adr/0001-keep-agent-guidance-in-copyable-files.md")
+    for phrase, error in ADR_DECISION_PHRASES.items():
+        if phrase not in adr:
             errors.append(error)
 
     architecture = read_text("docs/agent/architecture-boundaries.md")

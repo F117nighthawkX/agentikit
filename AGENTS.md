@@ -160,6 +160,14 @@ Do not document obvious implementation details, duplicate git history, or add do
 
 Use `docs/adr/` only for durable architectural decisions. See `docs/agent/adr-template.md`.
 
+Keep broadly applicable agent rules in `AGENTS.md`, repeatable workflows in `.agents/skills/`, and longer task-specific guidance in `docs/agent/`.
+
+Agent-operational guidance must not exist only in a README. A README can still provide useful project context and human-facing setup or usage information.
+
+Files under `docs/adr/` and `docs/plans/` are repository-specific records. Reuse the directory conventions across projects, not the records they contain.
+
+If a tool does not discover `.agents/skills/`, add a small tool-specific pointer to the canonical skill files instead of maintaining duplicate copies unless the tool requires them.
+
 ## Optional Reading and Skills
 
 Read optional docs only when the task calls for them:

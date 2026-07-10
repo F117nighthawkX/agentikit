@@ -16,7 +16,7 @@ Agentikit keeps the same general spirit: agents should clarify before guessing, 
 
 This project is not affiliated with Andrej Karpathy, Multica, or the original `andrej-karpathy-skills` repository.
 
-## Contents
+## Source Repository Contents
 
 ```text
 AGENTS.md
@@ -28,8 +28,10 @@ docs/
     llm-runtime-guidance.md
   adr/
     .gitkeep
+    0001-keep-agent-guidance-in-copyable-files.md
   plans/
     .gitkeep
+    *.md (repository-specific plans)
 .agents/
   skills/
     commit-report/
@@ -44,13 +46,17 @@ scripts/
 
 ## How to Use
 
-Copy these paths into the root of a repository:
+This README and the `scripts/` directory are source-repository files and should not be copied into a target repository. Agent-operational guidance has an authoritative home in the reusable files, so an agent using the kit does not depend on this README.
+
+Choose any of these reusable components for the root of a target repository:
 
 - `AGENTS.md`
 - `.agents/skills/`
 - `docs/agent/`
-- `docs/adr/`
-- `docs/plans/`
+- The `docs/adr/` directory convention, recreated empty or copied with only `.gitkeep`
+- The `docs/plans/` directory convention, recreated empty or copied with only `.gitkeep`
+
+Files under `docs/adr/*.md` and `docs/plans/*.md` are repository-specific records and should not be copied. A target repository should create its own ADRs and plans in those directories.
 
 The `.agents/` directory is hidden on some systems, so make sure your copy command includes hidden paths.
 
@@ -76,9 +82,9 @@ docs/plans/*.md
 !docs/plans/.gitkeep
 ```
 
-Use `docs/adr/` for durable architectural decisions after the relevant work is complete.
+Use `docs/adr/` for durable architectural decisions belonging to the target repository after the relevant work is complete.
 
-The `scripts/` directory is for maintaining this source repository. It does not need to be copied into target repositories.
+The `scripts/` directory is for maintaining this source repository only.
 
 ## Skills
 
@@ -134,13 +140,13 @@ This repository intentionally does not use package-manager tooling. To verify th
 python scripts/verify_package.py
 ```
 
-That check verifies the expected paths, skill metadata, README copy instructions, and tracked `docs/adr/` and `docs/plans/` placeholders.
+That check verifies required source paths, skill metadata, agent-visible ownership rules, README distribution instructions, and the Agentikit decision record for this contract.
 
 ## Cross-Agent Notes
 
 Agentikit is centered on `AGENTS.md` and `.agents/skills/` because those paths are useful for Codex and can also serve as a tool-neutral convention for other coding agents.
 
-If another agent does not automatically discover `.agents/skills/`, keep the source files here and add a small tool-specific pointer rather than forking the rules. Avoid maintaining duplicate skill copies unless the tool requires it.
+The portable fallback for tools that do not automatically discover `.agents/skills/` is defined in `AGENTS.md`, so it travels with the kit.
 
 ## Attribution
 
@@ -151,4 +157,4 @@ Agentikit was influenced by `multica-ai/andrej-karpathy-skills` and the broader 
 - `AGENTS.md` should contain rules agents should apply broadly.
 - Skills should contain repeatable workflows with clear triggers.
 - Optional docs should contain longer guidance that is only relevant for some tasks.
-- ADRs should be added under `docs/adr/` only when a durable technical decision needs to be recorded.
+- ADRs and plans should be created for the repository using the kit, not copied from another repository.
