@@ -1,6 +1,6 @@
 ---
 name: repo-change-planner
-description: Use for planning focused follow-up changes in an existing repo. Writes a scoped implementation brief with 1 to 5 epics, acceptance criteria, likely files, risks, verification notes, and a handoff prompt to docs/plans/<plan-title>.md, or explains why the request is too broad and suggests ways to split it.
+description: Use for planning focused follow-up changes in an existing repo. Resolves material assumptions and questions before writing a scoped implementation brief with 1 to 5 epics, acceptance criteria, likely files, risks, verification notes, and a handoff prompt to docs/plans/<plan-title>.md, or explains why the request is too broad and suggests ways to split it.
 ---
 
 # Repo Change Planner Skill
@@ -61,9 +61,11 @@ Do not use this skill for:
 - Include relevant regression-preservation and product-fit criteria.
 - Match the repo's existing structure and patterns in the plan.
 - Keep the plan scoped to the user's request.
+- Choose the smallest number of coherent epics that accurately represents the work, from 1 to 5. Use one epic when the request is one cohesive implementation outcome, and add another only when it represents a meaningfully distinct outcome or workstream.
+- Do not default to 3 epics, pad the plan to reach a preferred count, or split setup, implementation, verification, documentation, or cleanup into separate epics unless they are independently meaningful parts of the requested change.
 - Do not force-fit broad work into 5 epics. If the request needs more than 5 coherent epics, requires product discovery, mixes unrelated goals, or depends on unresolved architecture decisions, use the "Request Too Broad" output instead of an implementation brief.
-- Separate known facts, assumptions, and open questions.
-- Mark anything that needs user confirmation before implementation.
+- Separate known facts, assumptions, and questions while drafting.
+- Resolve every question and any material assumption needing confirmation before finalizing the plan.
 - Write acceptance criteria that can be tested.
 - Write the full plan to a new file under `docs/plans/` instead of printing the full plan in chat. Use a filesystem-safe slug derived from the title, such as `docs/plans/add-settings-route.md`.
 - If `docs/plans/` does not exist, create it before writing the plan file.
@@ -86,13 +88,44 @@ Look for:
 
 Do not guess file names. If repo access is incomplete, state what could not be inspected.
 
+## Pre-Finalization Follow-up
+
+After inspecting repository context, identify candidate assumptions and questions before writing the plan file or final handoff prompt.
+
+If an answer could materially change scope, user-facing behavior, routing, data shape, persistence, public APIs, acceptance criteria, verification, or the selected epics:
+
+1. Ask the user a concise, numbered set of direct questions in chat.
+2. Include a candidate assumption for confirmation only when confirming or correcting it could change the plan.
+3. Do not create the plan file or present a handoff prompt yet.
+4. Wait for the user's answers. The user may answer inline without following a special form.
+
+Use this chat structure, omitting an empty subsection:
+
+```md
+## Planning Follow-up
+
+### Assumptions to Confirm
+
+1. <assumption to confirm or correct>
+
+### Questions
+
+1. <direct question>
+```
+
+If no material follow-up is needed, proceed directly to the normal implementation brief.
+
+After the user answers, perform a focused refinement pass across the entire plan and handoff prompt. Integrate each answer into every affected section, including requested change, assumptions, out of scope, epics, acceptance criteria, risks, verification, and handoff wording. Do not append an answer log or preserve stale draft wording.
+
+Retain only assumptions the implementation agent still needs and that are not already expressed clearly elsewhere in the plan. Remove assumptions that the user's answers converted into requirements or that became redundant. Resolve and remove every planning question. If any question remains, ask another follow-up instead of finalizing the normal implementation brief.
+
 ## Plan File Rules
 
 The plan file is a working artifact, not durable project documentation. Durable decisions belong in `docs/adr/` only when `AGENTS.md` and `docs/agent/adr-template.md` call for an ADR.
 
 After writing a plan file:
 
-- Do not update plan detail sections such as requested change, assumptions, open questions, out of scope, epics, acceptance criteria, likely files, risks, verification plan, or handoff prompt.
+- Do not update plan detail sections such as requested change, assumptions, out of scope, epics, acceptance criteria, likely files, risks, verification plan, or handoff prompt.
 - Only update checklist state and brief notes under the relevant checklist item.
 - If command access, implementation issues, or test failures arise during execution, add a concise note below the checklist item in question.
 - Mark an epic checklist item complete only after that epic's acceptance criteria have been met.
@@ -102,16 +135,13 @@ Every normal implementation brief plan file must include a checklist before the 
 ```md
 ## Execution Checklist
 
-- [ ] User confirmed assumptions are valid.
-- [ ] Open questions are resolved or explicitly accepted as non-blocking.
-- [ ] Epic 1 acceptance criteria met.
-- [ ] Epic 2 acceptance criteria met.
-- [ ] Epic 3 acceptance criteria met.
+- [ ] Remaining assumptions reviewed and still applicable.
+- [ ] Epic <number> acceptance criteria met.
 - [ ] Verification plan completed.
 - [ ] ADR need considered after completion.
 ```
 
-Adjust the number of epic checklist items to match the plan. If there are no open questions, keep the open-question checklist item and mark it complete only when implementation begins with that fact still true.
+Replace the epic placeholder with exactly one checklist item per planned epic. Do not infer a default count from the template. If the finalized plan has no remaining assumptions, omit the assumption checklist item.
 
 ## Required Output
 
@@ -162,15 +192,9 @@ List the relevant files, components, routes, data structures, styles, tests, or 
 
 ## Assumptions
 
-List only assumptions that affect implementation.
+List only remaining implementation-relevant assumptions that were not converted into requirements or expressed clearly elsewhere in the plan.
 
-Mark assumptions that need confirmation before coding.
-
-## Open Questions
-
-List questions that block implementation or could change user-facing behavior, routing, data shape, animation behavior, persistence, or public APIs.
-
-If there are no blocking questions, state that.
+If no assumptions remain, state `None.` Do not include an `Open Questions` section in a finalized normal implementation brief. If a question remains, return to "Pre-Finalization Follow-up" instead of writing the plan file.
 
 ## Plan File Use
 
@@ -188,7 +212,7 @@ Include tempting cleanup, unrelated refactors, unrelated styling updates, and fu
 
 ## Implementation Epics
 
-Create 1 to 5 epics. For each epic, use:
+Create 1 to 5 epics, following the smallest-coherent-count rules above. For each epic, use:
 
 ### Epic [number]: [name]
 
@@ -242,6 +266,12 @@ Do not claim these checks were run unless they were actually run while planning.
 
 Write a concise prompt the user can paste into an implementation agent.
 
+Format the prompt for reliable copy and paste:
+
+- Use plain text inside a fenced `text` code block.
+- Do not hard-wrap prose. Keep each paragraph or list item on one logical line and use blank lines only between intentional paragraphs or sections.
+- Do not indent the code fence or prefix its contents with list markers, blockquote markers, or other Markdown syntax.
+
 The handoff prompt should include:
 
 - The plan file path
@@ -251,8 +281,19 @@ The handoff prompt should include:
 - The acceptance criteria
 - The verification plan
 - Whether to use `$long-task-workflow`
+- The checklist-maintenance directive below, with the actual plan file path substituted
 
-After writing the plan file, respond in chat with only an abridged version:
+Do not include planning questions or a question-and-answer history in the handoff prompt. Reflect the resolved answers directly in its requested change, assumptions, scope, acceptance criteria, and verification wording.
+
+Include this directive verbatim in the handoff prompt, replacing the placeholder path:
+
+```text
+Treat the `## Execution Checklist` in `docs/plans/<plan-title>.md` as the persistent source of truth for implementation progress. At the start of work and after any interruption, read and reconcile it before proceeding. Update it in the plan file as soon as each checklist condition is satisfied and after each epic or verification phase, and sync it before any pause, handoff, or final response. An in-chat checklist may mirror the plan, but it does not replace updating the plan file. Mark an item complete only after its stated criteria are met. For partial work, blockers, command-access issues, or test failures, leave the item unchecked and add a brief note beneath it. Do not edit other plan sections.
+```
+
+After writing the plan file, respond in chat with only an abridged version, except for the handoff prompt. Copy the complete contents of the plan's `Suggested Handoff Prompt` code block into the chat response verbatim. Do not summarize, rewrite, reflow, or otherwise abbreviate that prompt. Before responding, compare the two code blocks and confirm their contents are identical, including paragraph breaks and list items.
+
+In the abridged response's `Epics` section, include exactly one summary line per planned epic.
 
 ````md
 Created plan file: `docs/plans/<plan-title>.md`
@@ -263,22 +304,17 @@ Created plan file: `docs/plans/<plan-title>.md`
 
 ## Assumptions
 
-- <assumption>
-
-## Open Questions
-
-- <question, or "No blocking open questions.">
+- <assumption, or "None.">
 
 ## Epics
 
-- Epic 1: <title> - <goal>
-- Epic 2: <title> - <goal>
+- Epic <number>: <title> - <goal>
 
 ## Handoff Prompt
 
 ```text
-<copyable handoff prompt that references docs/plans/<plan-title>.md>
+<verbatim contents of the plan's Suggested Handoff Prompt code block>
 ```
 ````
 
-Do not print the full plan in chat.
+Do not print any other part of the full plan in chat.
