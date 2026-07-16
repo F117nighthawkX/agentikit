@@ -124,6 +124,63 @@ FORBIDDEN_DEPENDENCY_PHRASES = {
     ),
 }
 
+WORKFLOW_ACTIVATION_ANCHOR = "coordination or continuity risk"
+
+WORKFLOW_ACTIVATION_PATHS = [
+    "AGENTS.md",
+    "README.md",
+    ".agents/skills/long-task-workflow/SKILL.md",
+    ".agents/skills/repo-change-planner/SKILL.md",
+]
+
+LONG_TASK_WORKFLOW_PHRASES = {
+    "persistent source of truth": (
+        "Long-task workflow is missing the authoritative tracker contract"
+    ),
+    "after any interruption": (
+        "Long-task workflow is missing the interruption-resume contract"
+    ),
+    "revise or supersede": (
+        "Long-task workflow is missing the material-drift contract"
+    ),
+    "Not verified:": (
+        "Long-task workflow is missing the unverified-work reporting contract"
+    ),
+    "Use `$commit-report` only when explicitly requested": (
+        "Long-task workflow is missing explicit commit-report delegation"
+    ),
+}
+
+PLANNER_WORKFLOW_PHRASES = {
+    "persistent source of truth": (
+        "Planner workflow is missing the authoritative tracker contract"
+    ),
+    "after any interruption": (
+        "Planner workflow is missing the interruption-resume contract"
+    ),
+    "revise or supersede": (
+        "Planner workflow is missing the material-drift contract"
+    ),
+}
+
+COMMIT_REPORT_WORKFLOW_PHRASES = {
+    "This skill owns commit-message rules, report structure, and commit-style completion reports.": (
+        "Commit-report workflow is missing its reporting-ownership contract"
+    ),
+}
+
+FORBIDDEN_LONG_TASK_WORKFLOW_PHRASES = {
+    "Then create an in-chat checklist.": (
+        "Long-task workflow restored the duplicate in-chat checklist instruction"
+    ),
+    "Prefer durable records in this order:": (
+        "Long-task workflow restored the ranked-records instruction"
+    ),
+    "Suggested commit message when useful.": (
+        "Long-task workflow restored default commit-message guidance"
+    ),
+}
+
 
 def read_text(path: str) -> str:
     return (ROOT / path).read_text(encoding="utf-8")
@@ -191,6 +248,54 @@ def main() -> int:
     for phrase, error in FORBIDDEN_DEPENDENCY_PHRASES.items():
         if phrase in dependency_guidance:
             errors.append(error)
+
+    workflow_texts = {
+        "AGENTS.md": agents,
+        "README.md": readme,
+        ".agents/skills/long-task-workflow/SKILL.md": read_text(
+            ".agents/skills/long-task-workflow/SKILL.md"
+        ),
+        ".agents/skills/repo-change-planner/SKILL.md": read_text(
+            ".agents/skills/repo-change-planner/SKILL.md"
+        ),
+    }
+    for path in WORKFLOW_ACTIVATION_PATHS:
+        if WORKFLOW_ACTIVATION_ANCHOR not in workflow_texts[path]:
+            errors.append(
+                f"{path} is missing workflow activation anchor: "
+                f"{WORKFLOW_ACTIVATION_ANCHOR}"
+            )
+
+    long_task = workflow_texts[".agents/skills/long-task-workflow/SKILL.md"]
+    for phrase, error in LONG_TASK_WORKFLOW_PHRASES.items():
+        if phrase not in long_task:
+            errors.append(
+                f".agents/skills/long-task-workflow/SKILL.md: {error}: {phrase}"
+            )
+    for phrase, error in FORBIDDEN_LONG_TASK_WORKFLOW_PHRASES.items():
+        if phrase in long_task:
+            errors.append(
+                f".agents/skills/long-task-workflow/SKILL.md: {error}: {phrase}"
+            )
+    if re.search(r"^Suggested commit message:$", long_task, flags=re.MULTILINE):
+        errors.append(
+            ".agents/skills/long-task-workflow/SKILL.md restored the standalone "
+            "Suggested commit message: template heading"
+        )
+
+    planner = workflow_texts[".agents/skills/repo-change-planner/SKILL.md"]
+    for phrase, error in PLANNER_WORKFLOW_PHRASES.items():
+        if phrase not in planner:
+            errors.append(
+                f".agents/skills/repo-change-planner/SKILL.md: {error}: {phrase}"
+            )
+
+    commit_report = read_text(".agents/skills/commit-report/SKILL.md")
+    for phrase, error in COMMIT_REPORT_WORKFLOW_PHRASES.items():
+        if phrase not in commit_report:
+            errors.append(
+                f".agents/skills/commit-report/SKILL.md: {error}: {phrase}"
+            )
 
     for path, name in SKILL_NAMES.items():
         skill = read_text(path)

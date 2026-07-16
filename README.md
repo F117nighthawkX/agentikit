@@ -93,7 +93,7 @@ Codex can discover repo-scoped skills from `.agents/skills/`.
 Included skills:
 
 - `$commit-report`: use for current diff summaries, suggested commit messages, commit-style completion reports, or final reports based on repository changes.
-- `$long-task-workflow`: use for large multi-file tasks, staged implementations, refactors, migrations, checklists, phased verification, handoff notes, or structured final reports.
+- `$long-task-workflow`: use for substantial repository changes with coordination or continuity risk, such as dependent phases, cross-layer work, unsafe partial states, migrations, refactors, or likely interruption.
 - `$repo-change-planner`: use for focused follow-up planning that writes scoped epics, acceptance criteria, likely files, risks, verification notes, and a handoff prompt to `docs/plans/`.
 
 Each skill is instruction-only and has a required `SKILL.md` with `name` and `description` metadata.

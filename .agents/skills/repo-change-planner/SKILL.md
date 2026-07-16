@@ -41,14 +41,12 @@ Do not use this skill for:
 - Full product discovery.
 - Stack selection from scratch.
 - Large roadmap generation.
-- Direct implementation.
-- Large staged execution.
-- Migrations or refactors that already need `$long-task-workflow`.
+- Direct implementation, including large staged execution. This skill may still plan a focused request that will later use `$long-task-workflow`.
 
 ## Relationship to Other Skills
 
 - Use `$repo-change-planner` to create the implementation brief.
-- Use `$long-task-workflow` later if one of the planned epics is large, risky, multi-phase, or touches several layers.
+- Use `$long-task-workflow` later when implementation has coordination or continuity risk, such as dependent phases, cross-layer work, unsafe partial states, migrations, refactors, or likely interruption.
 - Use `$commit-report` only after implementation, when the user asks for a current diff summary, suggested commit message, or commit-style completion report.
 
 ## Planning Rules
@@ -123,12 +121,31 @@ Retain only assumptions the implementation agent still needs and that are not al
 
 The plan file is a working artifact, not durable project documentation. Durable decisions belong in `docs/adr/` only when `AGENTS.md` and `docs/agent/adr-template.md` call for an ADR.
 
-After writing a plan file:
+During normal execution after writing a plan file:
 
 - Do not update plan detail sections such as requested change, assumptions, out of scope, epics, acceptance criteria, likely files, risks, verification plan, or handoff prompt.
 - Only update checklist state and brief notes under the relevant checklist item.
 - If command access, implementation issues, or test failures arise during execution, add a concise note below the checklist item in question.
 - Mark an epic checklist item complete only after that epic's acceptance criteria have been met.
+
+### Material Plan Drift and Approved Revisions
+
+Plan drift is material when implementation evidence means the brief can no longer be followed accurately, an assumption, scope boundary, acceptance criterion, or out-of-scope rule must change, verification would be weakened, or an applicable `AGENTS.md` confirmation boundary is triggered.
+
+When material drift occurs during execution:
+
+1. Stop before divergent code or plan-detail edits.
+2. Leave affected checklist items incomplete and add a concise evidence note.
+3. Explain the affected sections, meaningful options and tradeoffs, and a recommendation.
+4. Require explicit user approval to revise or supersede the brief. A generic instruction to continue is not approval unless it clearly accepts the proposed change.
+
+After explicit approval:
+
+- Revise the existing brief in place only when it remains the same focused 1-to-5-epic request. Return to this planning workflow, update every affected section and the handoff prompt atomically, add a concise approved-revision note under `Plan File Use`, preserve unaffected evidence, and reset affected epic and verification checklist state.
+- If the work becomes broader, different, or no longer fits this planner, split it or create a new plan file. Designate the new brief as the persistent source of truth and leave the old brief read-only apart from a concise checklist note linking to its successor.
+- If approval is denied, follow the original brief only when it remains viable; otherwise report a blocked or partial state.
+
+After revising a brief, apply the normal pre-finalization and output rules again, including the verbatim handoff-prompt comparison.
 
 Every normal implementation brief plan file must include a checklist before the implementation epics:
 
@@ -244,7 +261,7 @@ Use one:
 - Root `AGENTS.md` only
 - `$long-task-workflow`
 
-Choose `$long-task-workflow` if the epic touches several files or layers, has multiple phases, has real tradeoffs or unknowns, needs more than one verification command or manual check, or would be risky if partially implemented.
+Choose `$long-task-workflow` when implementation has coordination or continuity risk, such as dependent phases, cross-layer work, unsafe partial states, migrations, refactors, or likely interruption. File count, command count, and report format are not sufficient by themselves.
 
 ## Verification Plan
 
@@ -288,7 +305,7 @@ Do not include planning questions or a question-and-answer history in the handof
 Include this directive verbatim in the handoff prompt, replacing the placeholder path:
 
 ```text
-Treat the `## Execution Checklist` in `docs/plans/<plan-title>.md` as the persistent source of truth for implementation progress. At the start of work and after any interruption, read and reconcile it before proceeding. Update it in the plan file as soon as each checklist condition is satisfied and after each epic or verification phase, and sync it before any pause, handoff, or final response. An in-chat checklist may mirror the plan, but it does not replace updating the plan file. Mark an item complete only after its stated criteria are met. For partial work, blockers, command-access issues, or test failures, leave the item unchecked and add a brief note beneath it. Do not edit other plan sections.
+Treat the `## Execution Checklist` in `docs/plans/<plan-title>.md` as the persistent source of truth for declared progress. At the start of work and after any interruption, reconcile it with the request, current worktree and diff, acceptance evidence, and verification freshness before proceeding. Update it in the plan file as soon as each checklist condition is satisfied and after each epic or verification phase, and sync it before any pause, handoff, or final response. Reopen unsupported items with a concise note, and treat later edits as making affected checks stale. An in-chat checklist may mirror the plan, but it does not replace updating the plan file. Mark an item complete only after its stated criteria and required verification are met. For partial work, blockers, command-access issues, or test failures, leave the item unchecked and add a brief note beneath it. Do not edit other plan sections during normal execution. If evidence materially invalidates the brief, stop before divergent edits and ask for explicit approval to revise or supersede it under `Material Plan Drift and Approved Revisions`.
 ```
 
 After writing the plan file, respond in chat with only an abridged version, except for the handoff prompt. Copy the complete contents of the plan's `Suggested Handoff Prompt` code block into the chat response verbatim. Do not summarize, rewrite, reflow, or otherwise abbreviate that prompt. Before responding, compare the two code blocks and confirm their contents are identical, including paragraph breaks and list items.
