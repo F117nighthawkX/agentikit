@@ -9,12 +9,21 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
+CHANGE_EXECUTION_SKILL_NAME = "coordinate-change-execution"
+CHANGE_EXECUTION_SKILL_PATH = (
+    f".agents/skills/{CHANGE_EXECUTION_SKILL_NAME}/SKILL.md"
+)
+LEGACY_CHANGE_EXECUTION_SKILL_NAME = "long-task-workflow"
+LEGACY_CHANGE_EXECUTION_SKILL_PATH = (
+    f".agents/skills/{LEGACY_CHANGE_EXECUTION_SKILL_NAME}"
+)
+
 SOURCE_REQUIRED_FILES = [
     "AGENTS.md",
     "README.md",
     "LICENSE",
     ".agents/skills/commit-report/SKILL.md",
-    ".agents/skills/long-task-workflow/SKILL.md",
+    CHANGE_EXECUTION_SKILL_PATH,
     ".agents/skills/repo-change-planner/SKILL.md",
     "docs/agent/architecture-boundaries.md",
     "docs/agent/adr-template.md",
@@ -23,6 +32,10 @@ SOURCE_REQUIRED_FILES = [
     "docs/adr/0001-keep-agent-guidance-in-copyable-files.md",
     "docs/plans/.gitkeep",
     "scripts/verify_package.py",
+]
+
+SOURCE_FORBIDDEN_PATHS = [
+    LEGACY_CHANGE_EXECUTION_SKILL_PATH,
 ]
 
 README_REUSABLE_PATHS = [
@@ -51,9 +64,23 @@ README_DISTRIBUTION_PHRASES = {
     ),
 }
 
+README_COMMIT_REPORT_ROUTE_PREFIX = "- `$commit-report`:"
+
+README_COMMIT_REPORT_ROUTE_PHRASES = {
+    "explicitly requested": (
+        "README does not restrict commit-report routing to explicit requests"
+    ),
+}
+
+README_FORBIDDEN_COMMIT_REPORT_ROUTE_PHRASES = {
+    "or final reports based on repository changes": (
+        "README still routes ordinary final reports to commit-report"
+    ),
+}
+
 SKILL_NAMES = {
     ".agents/skills/commit-report/SKILL.md": "commit-report",
-    ".agents/skills/long-task-workflow/SKILL.md": "long-task-workflow",
+    CHANGE_EXECUTION_SKILL_PATH: CHANGE_EXECUTION_SKILL_NAME,
     ".agents/skills/repo-change-planner/SKILL.md": "repo-change-planner",
 }
 
@@ -129,25 +156,70 @@ WORKFLOW_ACTIVATION_ANCHOR = "coordination or continuity risk"
 WORKFLOW_ACTIVATION_PATHS = [
     "AGENTS.md",
     "README.md",
-    ".agents/skills/long-task-workflow/SKILL.md",
+    CHANGE_EXECUTION_SKILL_PATH,
     ".agents/skills/repo-change-planner/SKILL.md",
 ]
 
-LONG_TASK_WORKFLOW_PHRASES = {
+CHANGE_EXECUTION_ROUTE_PATHS = [
+    "AGENTS.md",
+    "README.md",
+    ".agents/skills/repo-change-planner/SKILL.md",
+]
+
+COORDINATE_CHANGE_EXECUTION_DISCOVERY_PHRASES = {
+    WORKFLOW_ACTIVATION_ANCHOR: (
+        "Coordinate-change-execution frontmatter is missing its positive discovery trigger"
+    ),
+    "planning-only": (
+        "Coordinate-change-execution frontmatter is missing the planning-only exclusion"
+    ),
+    "report-only": (
+        "Coordinate-change-execution frontmatter is missing the report-only exclusion"
+    ),
+    "simple mechanical": (
+        "Coordinate-change-execution frontmatter is missing the mechanical-work exclusion"
+    ),
+    "verification that later edits can make stale": (
+        "Coordinate-change-execution frontmatter is missing the verification-freshness trigger"
+    ),
+}
+
+TRACKER_COMPOSITION_PHRASES = {
+    "conceptual execution phases onto": (
+        "Workflow is missing planner-checklist phase mapping"
+    ),
+    "same item identities and statuses": (
+        "Workflow is missing mirror identity and status alignment"
+    ),
+    "independent completion claims": (
+        "Workflow allows a mirror to become a competing tracker"
+    ),
+}
+
+COORDINATE_CHANGE_EXECUTION_WORKFLOW_PHRASES = {
     "persistent source of truth": (
-        "Long-task workflow is missing the authoritative tracker contract"
+        "Coordinate-change-execution is missing the authoritative tracker contract"
     ),
     "after any interruption": (
-        "Long-task workflow is missing the interruption-resume contract"
+        "Coordinate-change-execution is missing the interruption-resume contract"
     ),
     "revise or supersede": (
-        "Long-task workflow is missing the material-drift contract"
+        "Coordinate-change-execution is missing the material-drift contract"
     ),
     "Not verified:": (
-        "Long-task workflow is missing the unverified-work reporting contract"
+        "Coordinate-change-execution is missing the unverified-work reporting contract"
     ),
     "Use `$commit-report` only when explicitly requested": (
-        "Long-task workflow is missing explicit commit-report delegation"
+        "Coordinate-change-execution is missing explicit commit-report delegation"
+    ),
+    "sole status-bearing execution tracker": (
+        "Coordinate-change-execution is missing the single-tracker fallback"
+    ),
+    "Identify the progress authority before creating or updating tracker state": (
+        "Coordinate-change-execution is missing authority-before-state ordering"
+    ),
+    "may reorder or add steps but must not omit or weaken these outcomes": (
+        "Coordinate-change-execution allows project checks to replace the final gate"
     ),
 }
 
@@ -161,7 +233,15 @@ PLANNER_WORKFLOW_PHRASES = {
     "revise or supersede": (
         "Planner workflow is missing the material-drift contract"
     ),
+    "Every applicable `AGENTS.md` file": (
+        "Planner workflow does not require all applicable scoped instructions"
+    ),
 }
+
+PLANNER_HANDOFF_DIRECTIVE_ANCHOR = (
+    "Include this directive verbatim in the handoff prompt, "
+    "replacing the placeholder path:"
+)
 
 COMMIT_REPORT_WORKFLOW_PHRASES = {
     "This skill owns commit-message rules, report structure, and commit-style completion reports.": (
@@ -169,29 +249,53 @@ COMMIT_REPORT_WORKFLOW_PHRASES = {
     ),
 }
 
-FORBIDDEN_LONG_TASK_WORKFLOW_PHRASES = {
+FORBIDDEN_COORDINATE_CHANGE_EXECUTION_WORKFLOW_PHRASES = {
     "Then create an in-chat checklist.": (
-        "Long-task workflow restored the duplicate in-chat checklist instruction"
+        "Coordinate-change-execution restored the duplicate in-chat checklist instruction"
     ),
     "Prefer durable records in this order:": (
-        "Long-task workflow restored the ranked-records instruction"
+        "Coordinate-change-execution restored the ranked-records instruction"
     ),
     "Suggested commit message when useful.": (
-        "Long-task workflow restored default commit-message guidance"
+        "Coordinate-change-execution restored default commit-message guidance"
     ),
 }
+
+FRONTMATTER_PATTERN = re.compile(
+    r"\A---\n(?P<body>.*?)\n---(?:\n|\Z)",
+    flags=re.DOTALL,
+)
 
 
 def read_text(path: str) -> str:
     return (ROOT / path).read_text(encoding="utf-8")
 
 
-def has_frontmatter_field(text: str, field: str, value: str | None = None) -> bool:
-    pattern = rf"^{re.escape(field)}:\s*(.+)$"
-    match = re.search(pattern, text, flags=re.MULTILINE)
-    if not match:
-        return False
-    return value is None or match.group(1).strip() == value
+def extract_frontmatter(text: str) -> str | None:
+    match = FRONTMATTER_PATTERN.match(text)
+    return match.group("body") if match else None
+
+
+def frontmatter_field_value(frontmatter: str, field: str) -> str | None:
+    match = re.search(
+        rf"^{re.escape(field)}:[ \t]*(.+)$",
+        frontmatter,
+        flags=re.MULTILINE,
+    )
+    return match.group(1).strip() if match else None
+
+
+def extract_fenced_text_block_after(text: str, anchor: str) -> str | None:
+    position = text.find(anchor)
+    if position < 0:
+        return None
+
+    match = re.match(
+        r"\s*```text\n(?P<body>.*?)\n```",
+        text[position + len(anchor) :],
+        flags=re.DOTALL,
+    )
+    return match.group("body") if match else None
 
 
 def main() -> int:
@@ -200,6 +304,10 @@ def main() -> int:
     for path in SOURCE_REQUIRED_FILES:
         if not (ROOT / path).is_file():
             errors.append(f"Missing required file: {path}")
+
+    for path in SOURCE_FORBIDDEN_PATHS:
+        if (ROOT / path).exists():
+            errors.append(f"Obsolete source path remains after skill rename: {path}")
 
     for path in ["docs/adr", "docs/plans", ".agents/skills", "docs/agent"]:
         if not (ROOT / path).is_dir():
@@ -225,6 +333,24 @@ def main() -> int:
         if phrase not in readme:
             errors.append(f"README is missing maintainer/copy guidance: {phrase}")
 
+    commit_report_route = next(
+        (
+            line
+            for line in readme.splitlines()
+            if line.startswith(README_COMMIT_REPORT_ROUTE_PREFIX)
+        ),
+        None,
+    )
+    if commit_report_route is None:
+        errors.append("README is missing the `$commit-report` skill route")
+    else:
+        for phrase, error in README_COMMIT_REPORT_ROUTE_PHRASES.items():
+            if phrase not in commit_report_route:
+                errors.append(error)
+        for phrase, error in README_FORBIDDEN_COMMIT_REPORT_ROUTE_PHRASES.items():
+            if phrase in commit_report_route:
+                errors.append(error)
+
     agents = read_text("AGENTS.md")
     for command in ["Install", "Test", "Lint", "Typecheck", "Build", "Format"]:
         if f"- {command}: `TODO`" not in agents:
@@ -249,15 +375,43 @@ def main() -> int:
         if phrase in dependency_guidance:
             errors.append(error)
 
+    skill_texts = {path: read_text(path) for path in SKILL_NAMES}
+    skill_frontmatter: dict[str, str] = {}
+    for path, name in SKILL_NAMES.items():
+        frontmatter = extract_frontmatter(skill_texts[path])
+        if frontmatter is None:
+            errors.append(f"{path} is missing bounded YAML frontmatter")
+            continue
+
+        skill_frontmatter[path] = frontmatter
+        if frontmatter_field_value(frontmatter, "name") != name:
+            errors.append(f"{path} has missing or incorrect skill name")
+        if not frontmatter_field_value(frontmatter, "description"):
+            errors.append(f"{path} is missing skill description")
+
+    change_execution_frontmatter = skill_frontmatter.get(CHANGE_EXECUTION_SKILL_PATH)
+    if change_execution_frontmatter is not None:
+        change_execution_description = frontmatter_field_value(
+            change_execution_frontmatter,
+            "description",
+        )
+        if change_execution_description:
+            for phrase, error in (
+                COORDINATE_CHANGE_EXECUTION_DISCOVERY_PHRASES.items()
+            ):
+                if phrase not in change_execution_description:
+                    errors.append(
+                        f"{CHANGE_EXECUTION_SKILL_PATH}: "
+                        f"{error}: {phrase}"
+                    )
+
     workflow_texts = {
         "AGENTS.md": agents,
         "README.md": readme,
-        ".agents/skills/long-task-workflow/SKILL.md": read_text(
-            ".agents/skills/long-task-workflow/SKILL.md"
-        ),
-        ".agents/skills/repo-change-planner/SKILL.md": read_text(
+        CHANGE_EXECUTION_SKILL_PATH: skill_texts[CHANGE_EXECUTION_SKILL_PATH],
+        ".agents/skills/repo-change-planner/SKILL.md": skill_texts[
             ".agents/skills/repo-change-planner/SKILL.md"
-        ),
+        ],
     }
     for path in WORKFLOW_ACTIVATION_PATHS:
         if WORKFLOW_ACTIVATION_ANCHOR not in workflow_texts[path]:
@@ -266,20 +420,46 @@ def main() -> int:
                 f"{WORKFLOW_ACTIVATION_ANCHOR}"
             )
 
-    long_task = workflow_texts[".agents/skills/long-task-workflow/SKILL.md"]
-    for phrase, error in LONG_TASK_WORKFLOW_PHRASES.items():
-        if phrase not in long_task:
+    route_anchor = f"`${CHANGE_EXECUTION_SKILL_NAME}`"
+    for path in CHANGE_EXECUTION_ROUTE_PATHS:
+        if route_anchor not in workflow_texts[path]:
             errors.append(
-                f".agents/skills/long-task-workflow/SKILL.md: {error}: {phrase}"
+                f"{path} is missing change-execution skill route: {route_anchor}"
             )
-    for phrase, error in FORBIDDEN_LONG_TASK_WORKFLOW_PHRASES.items():
-        if phrase in long_task:
+        if LEGACY_CHANGE_EXECUTION_SKILL_NAME in workflow_texts[path]:
             errors.append(
-                f".agents/skills/long-task-workflow/SKILL.md: {error}: {phrase}"
+                f"{path} still routes to the renamed skill: "
+                f"{LEGACY_CHANGE_EXECUTION_SKILL_NAME}"
             )
-    if re.search(r"^Suggested commit message:$", long_task, flags=re.MULTILINE):
+
+    change_execution = workflow_texts[CHANGE_EXECUTION_SKILL_PATH]
+    for phrase, error in COORDINATE_CHANGE_EXECUTION_WORKFLOW_PHRASES.items():
+        if phrase not in change_execution:
+            errors.append(
+                f"{CHANGE_EXECUTION_SKILL_PATH}: "
+                f"{error}: {phrase}"
+            )
+    for phrase, error in TRACKER_COMPOSITION_PHRASES.items():
+        if phrase not in change_execution:
+            errors.append(
+                f"{CHANGE_EXECUTION_SKILL_PATH}: "
+                f"{error}: {phrase}"
+            )
+    for phrase, error in (
+        FORBIDDEN_COORDINATE_CHANGE_EXECUTION_WORKFLOW_PHRASES.items()
+    ):
+        if phrase in change_execution:
+            errors.append(
+                f"{CHANGE_EXECUTION_SKILL_PATH}: "
+                f"{error}: {phrase}"
+            )
+    if re.search(
+        r"^Suggested commit message:$",
+        change_execution,
+        flags=re.MULTILINE,
+    ):
         errors.append(
-            ".agents/skills/long-task-workflow/SKILL.md restored the standalone "
+            f"{CHANGE_EXECUTION_SKILL_PATH} restored the standalone "
             "Suggested commit message: template heading"
         )
 
@@ -290,21 +470,29 @@ def main() -> int:
                 f".agents/skills/repo-change-planner/SKILL.md: {error}: {phrase}"
             )
 
-    commit_report = read_text(".agents/skills/commit-report/SKILL.md")
+    planner_directive = extract_fenced_text_block_after(
+        planner,
+        PLANNER_HANDOFF_DIRECTIVE_ANCHOR,
+    )
+    if planner_directive is None:
+        errors.append(
+            ".agents/skills/repo-change-planner/SKILL.md is missing its "
+            "required handoff directive block"
+        )
+    else:
+        for phrase, error in TRACKER_COMPOSITION_PHRASES.items():
+            if phrase not in planner_directive:
+                errors.append(
+                    ".agents/skills/repo-change-planner/SKILL.md: "
+                    f"{error} in the generated handoff directive: {phrase}"
+                )
+
+    commit_report = skill_texts[".agents/skills/commit-report/SKILL.md"]
     for phrase, error in COMMIT_REPORT_WORKFLOW_PHRASES.items():
         if phrase not in commit_report:
             errors.append(
                 f".agents/skills/commit-report/SKILL.md: {error}: {phrase}"
             )
-
-    for path, name in SKILL_NAMES.items():
-        skill = read_text(path)
-        if not skill.startswith("---\n"):
-            errors.append(f"{path} is missing YAML frontmatter")
-        if not has_frontmatter_field(skill, "name", name):
-            errors.append(f"{path} has missing or incorrect skill name")
-        if not has_frontmatter_field(skill, "description"):
-            errors.append(f"{path} is missing skill description")
 
     return report(errors)
 

@@ -178,4 +178,4 @@ Read optional docs only when the task calls for them:
 Use available skills when the task matches them:
 - `$commit-report`: use for explicit current diff summaries, suggested commit messages, or commit-style completion reports.
 - `$repo-change-planner`: use before implementation when a focused follow-up request should become a scoped plan under `docs/plans/`, or when the request should be split before planning. This skill plans only.
-- `$long-task-workflow`: use for executing substantial repository changes with coordination or continuity risk, such as dependent phases, cross-layer work, unsafe partial states, migrations, refactors, or likely interruption.
+- `$coordinate-change-execution`: use for executing substantial repository changes with coordination or continuity risk, such as dependent phases, cross-layer work, unsafe partial states, migrations, refactors, or likely interruption.
